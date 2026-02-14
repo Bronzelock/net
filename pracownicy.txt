@@ -1,0 +1,2 @@
+1|Jan|Kowalski|35|Programista|8500
+2|Anna|Nowak|28|Tester|6200
