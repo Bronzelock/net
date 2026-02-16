@@ -46,7 +46,7 @@ class Kartoteka
 
     public void Wszyscy()
     {
-        Console.WriteLine("\n--- LISTA PRACOWNIKÓW ---");
+        Console.WriteLine("\nLista pracowników");
         foreach (var p in lista) p.Pokaz();
         Console.WriteLine($"Razem: {lista.Count}\n");
     }
@@ -59,11 +59,10 @@ class Program
 {
     static void Main()
     {
-        Console.WriteLine("=== KARTOTEKA ===\n");
+        Console.WriteLine("Kartoteka\n");
         
         var k = new Kartoteka();
         
-        // Dodawanie
         k.Dodaj(new Pracownik { Id = 1, Imie = "Jan", Nazwisko = "Kowalski", Wiek = 35, Stanowisko = Stanowisko.Programista, Placa = 8500 });
         k.Dodaj(new Pracownik { Id = 2, Imie = "Anna", Nazwisko = "Nowak", Wiek = 28, Stanowisko = Stanowisko.Tester, Placa = 6200 });
         k.Dodaj(new Pracownik { Id = 3, Imie = "Piotr", Nazwisko = "Wiśniewski", Wiek = 42, Stanowisko = Stanowisko.Manager, Placa = 12000 });
@@ -73,7 +72,7 @@ class Program
         Console.WriteLine("Szukanie 'anna':");
         foreach (var p in k.Szukaj("anna")) p.Pokaz();
         
-        Console.WriteLine("\nUsuwam ID=2");
+        Console.WriteLine("\nUsuwanie ID=2");
         k.Usun(2);
         k.Wszyscy();
         

@@ -6,7 +6,7 @@ class Program
 {
     static void Main()
     {
-        Console.WriteLine("=== ZADANIE 2 - PORÓWNANIE LIST ===\n");
+        Console.WriteLine("Porównanie sum list\n");
         
         var a = new List<int> { 1, 2, 3, 4 };
         var b = new List<int> { 20, 30 };

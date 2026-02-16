@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-// Proste szyfrowanie Cezara
 static class Cezar
 {
-    private static int przesuniecie = 3; // Możesz zmienić
+    private static int przesuniecie = 3;
     
     public static string Szyfruj(string tekst)
     {
@@ -45,7 +44,7 @@ class Program
 {
     static void Main()
     {
-        Console.WriteLine("=== SZYFROWANIE CEZARA ===\n");
+        Console.WriteLine("Szyfrowanie cezara\n");
         
         string oryginal = "Ala ma kota";
         string zaszyfrowane = Cezar.Szyfruj(oryginal);
@@ -55,7 +54,6 @@ class Program
         Console.WriteLine($"Zaszyfrowane (przesunięcie=3): {zaszyfrowane}");
         Console.WriteLine($"Odszyfrowane: {odszyfrowane}");
         
-        // Przykład zapisu zaszyfrowanego pliku
         string tekst = "Jan Kowalski, Programista";
         File.WriteAllText("tajne.txt", Cezar.Szyfruj(tekst));
         Console.WriteLine($"\nZapisano zaszyfrowany tekst do tajne.txt");

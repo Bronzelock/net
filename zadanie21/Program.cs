@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace Zadanie1_ONP
 {
-    // Klasa bazowa dla wyrażeń
     abstract class OnpExpression
     {
         public abstract override string ToString();
     }
 
-    // Klasa dla stałych/liczb
     class Value : OnpExpression
     {
         private string value;
@@ -18,7 +16,6 @@ namespace Zadanie1_ONP
         public override string ToString() => value;
     }
 
-    // Klasa dla zmiennych
     class Variable : OnpExpression
     {
         private string name;
@@ -27,7 +24,6 @@ namespace Zadanie1_ONP
         public override string ToString() => name;
     }
 
-    // Klasa dla operatorów binarnych
     class BinaryOperator : OnpExpression
     {
         private string op;
@@ -43,12 +39,10 @@ namespace Zadanie1_ONP
         
         public override string ToString()
         {
-            // Format ONP: lewy prawy operator
             return $"{left} {right} {op}";
         }
     }
 
-    // Klasa dla przypisania (specjalny przypadek)
     class Assignment : OnpExpression
     {
         private string variable;
@@ -70,40 +64,30 @@ namespace Zadanie1_ONP
     {
         static void Main()
         {
-            Console.WriteLine("=== ZADANIE 1 - ONP ===\n");
-            
-            // Tworzenie wyrażenia: x = a - b * c
-            // Kolejność w ONP: a b c * - x = (dla przypisania)
+            Console.WriteLine("Konwersja na ONP\n");
             
             var a = new Variable("a");
             var b = new Variable("b");
             var c = new Variable("c");
             
-            // Najpierw mnożenie: b * c
             var mnozenie = new BinaryOperator("*", b, c);
             
-            // Potem odejmowanie: a - (b * c)
             var odejmowanie = new BinaryOperator("-", a, mnozenie);
             
-            // Na końcu przypisanie: x = ...
             var przypisanie = new Assignment("x", odejmowanie);
             
             Console.WriteLine($"Wyrażenie: x = a - b * c");
             Console.WriteLine($"ONP: {przypisanie}");
             
-            // Inne przykłady
             Console.WriteLine("\nInne przykłady:");
             
-            // a + b
             var dodawanie = new BinaryOperator("+", new Variable("a"), new Variable("b"));
             Console.WriteLine($"a + b -> {dodawanie}");
             
-            // (a + b) * c
             var dod2 = new BinaryOperator("+", new Variable("a"), new Variable("b"));
             var mno2 = new BinaryOperator("*", dod2, new Variable("c"));
             Console.WriteLine($"(a + b) * c -> {mno2}");
             
-            // 5 + 3 * 2
             var piec = new Value("5");
             var trzy = new Value("3");
             var dwa = new Value("2");

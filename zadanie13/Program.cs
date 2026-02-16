@@ -30,7 +30,6 @@ class Kartoteka
         Console.WriteLine($"Razem: {Lista.Count}");
     }
 
-    // Zapis TXT
     public void ZapiszTxt(string plik)
     {
         using var sw = new StreamWriter(plik);
@@ -39,7 +38,6 @@ class Kartoteka
         Console.WriteLine($"Zapisano do {plik}");
     }
 
-    // Odczyt TXT
     public void WczytajTxt(string plik)
     {
         Lista.Clear();
@@ -59,7 +57,6 @@ class Kartoteka
         Console.WriteLine($"Wczytano z {plik}");
     }
 
-    // Zapis JSON
     public void ZapiszJson(string plik)
     {
         var json = JsonSerializer.Serialize(Lista, new JsonSerializerOptions { WriteIndented = true });
@@ -67,7 +64,6 @@ class Kartoteka
         Console.WriteLine($"Zapisano do {plik}");
     }
 
-    // Odczyt JSON
     public void WczytajJson(string plik)
     {
         var json = File.ReadAllText(plik);
@@ -80,7 +76,7 @@ class Program
 {
     static void Main()
     {
-        Console.WriteLine("=== ZAPIS DO PLIKU ===\n");
+        Console.WriteLine("Zapis do pliku\n");
         
         var k = new Kartoteka();
         k.Dodaj(new Pracownik { Id = 1, Imie = "Jan", Nazwisko = "Kowalski", Wiek = 35, Stanowisko = Stanowisko.Programista, Placa = 8500 });
@@ -89,7 +85,6 @@ class Program
         Console.WriteLine("Przed zapisem:");
         k.PokazWszystkich();
         
-        // Test zapisu/odczytu
         k.ZapiszTxt("pracownicy.txt");
         k.ZapiszJson("pracownicy.json");
         

@@ -20,7 +20,6 @@ namespace Zadanie1
         public virtual string IP { get; set; }
     }
 
-    // Mapowanie (uproszczone - bez enum)
     public class EventLogMap : ClassMap<EventLog>
     {
         public EventLogMap()
@@ -39,18 +38,16 @@ namespace Zadanie1
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("=== ZADANIE 1 - CRUD ZDARZEŃ ===\n");
+            Console.WriteLine("CRUD zdarzeń\n");
 
             try
             {
-                // Tworzenie fabryki sesji
                 var factory = Fluently.Configure()
                     .Database(SQLiteConfiguration.Standard.UsingFile("events.db"))
                     .Mappings(m => m.FluentMappings.Add<EventLogMap>())
                     .ExposeConfiguration(c => new SchemaExport(c).Create(true, true))
                     .BuildSessionFactory();
 
-                // CREATE
                 using (var session = factory.OpenSession())
                 using (var tx = session.BeginTransaction())
                 {
@@ -85,16 +82,14 @@ namespace Zadanie1
                     Console.WriteLine("Dodano 3 zdarzenia\n");
                 }
 
-                // READ - wszystkie
                 using (var session = factory.OpenSession())
                 {
                     var events = session.Query<EventLog>().ToList();
-                    Console.WriteLine("WSZYSTKIE ZDARZENIA:");
+                    Console.WriteLine("Wszystkie zdarzenia:");
                     foreach (var e in events)
                         Console.WriteLine($"{e.Id} | {e.EventDate:HH:mm:ss} | {e.Source} | {e.Type} | {e.IP} | {e.Data}");
                 }
 
-                // UPDATE
                 using (var session = factory.OpenSession())
                 using (var tx = session.BeginTransaction())
                 {
@@ -108,7 +103,6 @@ namespace Zadanie1
                     }
                 }
 
-                // DELETE
                 using (var session = factory.OpenSession())
                 using (var tx = session.BeginTransaction())
                 {
@@ -121,7 +115,6 @@ namespace Zadanie1
                     }
                 }
 
-                // Podsumowanie
                 using (var session = factory.OpenSession())
                 {
                     Console.WriteLine($"\nPozostało zdarzeń: {session.Query<EventLog>().Count()}");

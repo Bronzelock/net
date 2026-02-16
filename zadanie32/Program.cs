@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace Zadanie2_SortedList
 {
-    // ========== INTERFEJS STRATEGII ==========
     public interface ISortStrategy
     {
         void Sort(List<string> list);
     }
 
-    // ========== KONKRETNE STRATEGIE ==========
     public class QuickSort : ISortStrategy
     {
         public void Sort(List<string> list)
@@ -48,7 +46,6 @@ namespace Zadanie2_SortedList
         }
     }
 
-    // ========== KLASA SORTEDLIST ==========
     public class SortedList
     {
         private List<string> _items = new List<string>();
@@ -79,7 +76,7 @@ namespace Zadanie2_SortedList
         {
             if (_sortStrategy == null)
             {
-                Console.WriteLine("Nie ustawiono strategii sortowania!");
+                Console.WriteLine("Nie ustawiono strategii sortowania");
                 return;
             }
             _sortStrategy.Sort(_items);
@@ -88,7 +85,6 @@ namespace Zadanie2_SortedList
         public List<string> GetItems() => _items;
     }
 
-    // ========== PROGRAM GŁÓWNY ==========
     class Program
     {
         static void Main()
@@ -97,7 +93,6 @@ namespace Zadanie2_SortedList
 
             var sortedList = new SortedList();
             
-            // Dodawanie elementów
             sortedList.Add("Piotr");
             sortedList.Add("Anna");
             sortedList.Add("Zofia");
@@ -112,18 +107,15 @@ namespace Zadanie2_SortedList
             sortedList.Sort();
             sortedList.Display();
 
-            // Dodajemy nowe elementy
             sortedList.Add("Adam");
             sortedList.Add("Ewa");
             Console.WriteLine("\nPo dodaniu elementów:");
             sortedList.Display();
 
-            // BubbleSort
             sortedList.SetSortStrategy(new BubbleSort());
             sortedList.Sort();
             sortedList.Display();
 
-            // MergeSort
             sortedList.SetSortStrategy(new MergeSort());
             sortedList.Sort();
             sortedList.Display();

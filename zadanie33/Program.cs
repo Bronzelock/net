@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Zadanie3_ObservableCollection
 {
-    // ========== INTERFEJS OBSERWATORA ==========
     public interface ICollectionObserver
     {
         void OnItemAdded(object item);
@@ -12,7 +11,6 @@ namespace Zadanie3_ObservableCollection
         void OnListCleared();
     }
 
-    // ========== KONKRETNY OBSERWATOR ==========
     public class ConsoleLogger : ICollectionObserver
     {
         private string _collectionName;
@@ -34,11 +32,10 @@ namespace Zadanie3_ObservableCollection
 
         public void OnListCleared()
         {
-            Console.WriteLine($"[{_collectionName}] Wyczyszczono całą kolekcję.");
+            Console.WriteLine($"[{_collectionName}] Wyczyszczono całą kolekcję");
         }
     }
 
-    // ========== OBSERWOWANA KOLEKCJA ==========
     public class ObservableCollection<T> : IEnumerable<T>
     {
         private List<T> _list = new List<T>();
@@ -78,7 +75,6 @@ namespace Zadanie3_ObservableCollection
             }
         }
 
-        // Metody modyfikujące
         public void Add(T item)
         {
             _list.Add(item);
@@ -108,46 +104,43 @@ namespace Zadanie3_ObservableCollection
             set 
             { 
                 _list[index] = value;
-                // Można dodać powiadomienie o zmianie
             }
         }
 
         public int Count => _list.Count;
 
-        // IEnumerable
         public IEnumerator<T> GetEnumerator() => _list.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
-    // ========== PROGRAM GŁÓWNY ==========
     class Program
     {
         static void Main()
         {
-            Console.WriteLine("=== ZADANIE 3 - OBSERWOWANA KOLEKCJA ===\n");
+            Console.WriteLine("Obserwacja kolekcji\n");
 
             var observableList = new ObservableCollection<string>();
             var logger = new ConsoleLogger("MojaLista");
 
             observableList.Attach(logger);
 
-            Console.WriteLine("--- Dodawanie elementów ---");
+            Console.WriteLine("Dodawanie elementów");
             observableList.Add("Apple");
             observableList.Add("Banana");
             observableList.Add("Cherry");
             observableList.Add("Date");
 
-            Console.WriteLine("\n--- Usuwanie elementu ---");
+            Console.WriteLine("\nUsuwanie elementu");
             observableList.Remove("Banana");
 
-            Console.WriteLine("\n--- Czyszczenie kolekcji ---");
+            Console.WriteLine("\nCzyszczenie kolekcji");
             observableList.Clear();
 
-            Console.WriteLine("\n--- Dodawanie po czyszczeniu ---");
+            Console.WriteLine("\nDodawanie po czyszczeniu");
             observableList.Add("Xylophone");
             observableList.Add("Zebra");
 
-            Console.WriteLine("\n--- Iteracja po kolekcji ---");
+            Console.WriteLine("\nIteracja po elementach kolekcji");
             foreach (var item in observableList)
             {
                 Console.Write($"{item} ");

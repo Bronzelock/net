@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Zadanie1_Wzorce
 {
-    // ========== SINGLETON ==========
     public sealed class ConfigurationManager
     {
         private static readonly Lazy<ConfigurationManager> _instance = 
@@ -11,7 +10,7 @@ namespace Zadanie1_Wzorce
 
         private ConfigurationManager()
         {
-            Console.WriteLine("ConfigurationManager został utworzony (tylko raz!).");
+            Console.WriteLine("ConfigurationManager został utworzony");
         }
 
         public static ConfigurationManager Instance => _instance.Value;
@@ -25,7 +24,6 @@ namespace Zadanie1_Wzorce
         }
     }
 
-    // ========== OBSERVER ==========
     public interface IObserver
     {
         void Update(string message);
@@ -83,7 +81,6 @@ namespace Zadanie1_Wzorce
         }
     }
 
-    // ========== STRATEGY ==========
     public interface ICompressionStrategy
     {
         void Compress(string filePath);
@@ -93,7 +90,7 @@ namespace Zadanie1_Wzorce
     {
         public void Compress(string filePath)
         {
-            Console.WriteLine($"Kompresuję plik {filePath} używając algorytmu ZIP.");
+            Console.WriteLine($"Kompresuję plik {filePath} używając zip");
         }
     }
 
@@ -101,7 +98,7 @@ namespace Zadanie1_Wzorce
     {
         public void Compress(string filePath)
         {
-            Console.WriteLine($"Kompresuję plik {filePath} używając algorytmu RAR.");
+            Console.WriteLine($"Kompresuję plik {filePath} używając rar");
         }
     }
 
@@ -109,7 +106,7 @@ namespace Zadanie1_Wzorce
     {
         public void Compress(string filePath)
         {
-            Console.WriteLine($"Kompresuję plik {filePath} używając algorytmu 7-Zip.");
+            Console.WriteLine($"Kompresuję plik {filePath} używając 7-zip");
         }
     }
 
@@ -127,22 +124,20 @@ namespace Zadanie1_Wzorce
         {
             if (_strategy == null)
             {
-                Console.WriteLine("Najpierw ustaw strategię kompresji!");
+                Console.WriteLine("Najpierw ustaw strategię kompresji");
                 return;
             }
             _strategy.Compress(filePath);
         }
     }
 
-    // ========== PROGRAM GŁÓWNY ==========
     class Program
     {
         static void Main()
         {
-            Console.WriteLine("=== ZADANIE 1 - TRZY WZORCE PROJEKTOWE ===\n");
+            Console.WriteLine("Wzorce projektowe\n");
 
-            // 1. Test Singleton
-            Console.WriteLine("--- SINGLETON ---");
+            Console.WriteLine("singleton");
             var config1 = ConfigurationManager.Instance;
             config1.ShowSettings();
 
@@ -151,8 +146,7 @@ namespace Zadanie1_Wzorce
             config1.ShowSettings();
             Console.WriteLine($"Czy to ta sama instancja? {ReferenceEquals(config1, config2)}\n");
 
-            // 2. Test Observer
-            Console.WriteLine("--- OBSERVER ---");
+            Console.WriteLine("observer");
             var agency = new NewsAgency();
             var user1 = new User("Alice");
             var user2 = new User("Bob");
@@ -162,15 +156,14 @@ namespace Zadanie1_Wzorce
             agency.Attach(user2);
             agency.Attach(user3);
 
-            agency.LatestNews = "Wzorce projektowe są super!";
-            agency.LatestNews = "Dziś piątek!";
+            agency.LatestNews = "Nowy breaking news";
+            agency.LatestNews = "Dziś piątek";
 
             agency.Detach(user2);
-            agency.LatestNews = "Bob już nie subskrybuje.";
+            agency.LatestNews = "Bob już nie subskrybuje";
             Console.WriteLine();
 
-            // 3. Test Strategy
-            Console.WriteLine("--- STRATEGY ---");
+            Console.WriteLine("strategy");
             var compressor = new Compressor();
             compressor.CompressFile("dokument.txt");
 

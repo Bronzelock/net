@@ -1,6 +1,4 @@
 ﻿using System;
-
-// Prosta hierarchia trójkątów
 abstract class Trojkat
 {
     protected double a, b, c;
@@ -48,7 +46,7 @@ class Program
 {
     static void Main()
     {
-        Console.WriteLine("=== TRÓJKĄTY ===\n");
+        Console.WriteLine("Trójkąty\n");
         
         Console.WriteLine(new Rownoboczny(5));
         Console.WriteLine(new Rownoramienny(6, 5));
