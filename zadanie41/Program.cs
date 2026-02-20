@@ -4,130 +4,103 @@ using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Mapping;
 using NHibernate;
-using NHibernate.Linq;
+using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 
-namespace Zadanie1
+namespace NHibernateZadania
 {
-    // Model
-    public class EventLog
+    public class SignalEvent
     {
         public virtual int Id { get; protected set; }
         public virtual DateTime EventDate { get; set; }
         public virtual string Source { get; set; }
-        public virtual string Type { get; set; }
-        public virtual string Data { get; set; }
-        public virtual string IP { get; set; }
+        public virtual string EventType { get; set; }
+        public virtual string AdditionalData { get; set; }
+        public virtual string Identifier { get; set; }
     }
 
-    public class EventLogMap : ClassMap<EventLog>
+    public class SignalEventMap : ClassMap<SignalEvent>
     {
-        public EventLogMap()
+        public SignalEventMap()
         {
-            Table("Events");
+            Table("SignalEvents");
             Id(x => x.Id).GeneratedBy.Identity();
             Map(x => x.EventDate).Not.Nullable();
-            Map(x => x.Source).Length(100).Not.Nullable();
-            Map(x => x.Type).Length(20).Not.Nullable();
-            Map(x => x.Data).Length(500);
-            Map(x => x.IP).Length(45);
+            Map(x => x.Source).Not.Nullable();
+            Map(x => x.EventType)
+                .Not.Nullable()
+                .Check("EventType IN ('informacja', 'ostrzeżenie', 'błąd', 'błąd krytyczny')")
+                .Index("idx_event_type");
+            Map(x => x.AdditionalData);
+            Map(x => x.Identifier).Length(45);
+        }
+    }
+
+    public class SignalEventRepository
+    {
+        private readonly ISessionFactory _sessionFactory;
+        public SignalEventRepository(ISessionFactory sessionFactory) => _sessionFactory = sessionFactory;
+
+        public void Create(SignalEvent ev)
+        {
+            using var session = _sessionFactory.OpenSession();
+            using var tx = session.BeginTransaction();
+            session.Save(ev);
+            tx.Commit();
+        }
+
+        public void showAll()
+        {
+            using var session = _sessionFactory.OpenSession();
+            var events = session.Query<SignalEvent>().ToList();
+            Console.WriteLine("\nZapisane zdarzenia");
+            foreach (var e in events)
+                Console.WriteLine($"[{e.EventDate:yyyy-MM-dd HH:mm}] {e.EventType.ToUpper()} ze źródła {e.Source}: {e.AdditionalData} (ID: {e.Id})");
         }
     }
 
     class Program
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("CRUD zdarzeń\n");
+        private static void BuildSchema(Configuration config) => new SchemaExport(config).Create(false, true);
 
+        private static ISessionFactory CreateSessionFactory()
+        {
             try
             {
-                var factory = Fluently.Configure()
-                    .Database(SQLiteConfiguration.Standard.UsingFile("events.db"))
-                    .Mappings(m => m.FluentMappings.Add<EventLogMap>())
-                    .ExposeConfiguration(c => new SchemaExport(c).Create(true, true))
+                return Fluently.Configure()
+                    .Database(SQLiteConfiguration.Standard.UsingFile("zadanie1.sqlite"))
+                    .Mappings(m => m.FluentMappings.Add<SignalEventMap>())
+                    .ExposeConfiguration(cfg => 
+                    {
+                        cfg.SetProperty(NHibernate.Cfg.Environment.UseProxyValidator, "false");
+                        
+                        BuildSchema(cfg);
+                    })
                     .BuildSessionFactory();
-
-                using (var session = factory.OpenSession())
-                using (var tx = session.BeginTransaction())
-                {
-                    session.Save(new EventLog
-                    {
-                        EventDate = DateTime.Now,
-                        Source = "App",
-                        Type = "Info",
-                        Data = "Aplikacja uruchomiona",
-                        IP = "127.0.0.1"
-                    });
-
-                    session.Save(new EventLog
-                    {
-                        EventDate = DateTime.Now.AddMinutes(-5),
-                        Source = "DB",
-                        Type = "Warning",
-                        Data = "Wolne zapytanie",
-                        IP = "192.168.1.100"
-                    });
-
-                    session.Save(new EventLog
-                    {
-                        EventDate = DateTime.Now.AddMinutes(-10),
-                        Source = "Network",
-                        Type = "Error",
-                        Data = "Timeout połączenia",
-                        IP = "10.0.0.50"
-                    });
-
-                    tx.Commit();
-                    Console.WriteLine("Dodano 3 zdarzenia\n");
-                }
-
-                using (var session = factory.OpenSession())
-                {
-                    var events = session.Query<EventLog>().ToList();
-                    Console.WriteLine("Wszystkie zdarzenia:");
-                    foreach (var e in events)
-                        Console.WriteLine($"{e.Id} | {e.EventDate:HH:mm:ss} | {e.Source} | {e.Type} | {e.IP} | {e.Data}");
-                }
-
-                using (var session = factory.OpenSession())
-                using (var tx = session.BeginTransaction())
-                {
-                    var ev = session.Query<EventLog>().FirstOrDefault();
-                    if (ev != null)
-                    {
-                        ev.Data += " [EDYTOWANE]";
-                        session.Update(ev);
-                        tx.Commit();
-                        Console.WriteLine($"\nZaktualizowano zdarzenie ID={ev.Id}");
-                    }
-                }
-
-                using (var session = factory.OpenSession())
-                using (var tx = session.BeginTransaction())
-                {
-                    var ev = session.Query<EventLog>().FirstOrDefault();
-                    if (ev != null)
-                    {
-                        session.Delete(ev);
-                        tx.Commit();
-                        Console.WriteLine($"Usunięto zdarzenie ID={ev.Id}");
-                    }
-                }
-
-                using (var session = factory.OpenSession())
-                {
-                    Console.WriteLine($"\nPozostało zdarzeń: {session.Query<EventLog>().Count()}");
-                }
             }
-            catch (Exception ex)
+            catch (FluentConfigurationException ex)
             {
-                Console.WriteLine($"BŁĄD: {ex.Message}");
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine("\nBłąd konfiguracji nhibernate");
+                Console.WriteLine(ex.Message);
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("Szczegóły (InnerException): " + ex.InnerException.Message);
+                }
+                throw;
             }
+        }
 
-            Console.WriteLine("\nKoniec. Naciśnij dowolny klawisz...");
-            Console.ReadKey();
+        static void Main()
+        {
+            Console.WriteLine("Inicjalizacja bazy danych Zadania 1");
+            var factory = CreateSessionFactory();
+            var repo = new SignalEventRepository(factory);
+
+            Console.WriteLine("Dodawanie zdarzeń...");
+            repo.Create(new SignalEvent { EventDate = DateTime.Now, Source = "Serwer_A", EventType = "informacja", Identifier = "192.168.1.10", AdditionalData = "Uruchomiono usługę" });
+            repo.Create(new SignalEvent { EventDate = DateTime.Now, Source = "Aplikacja_Web", EventType = "błąd", Identifier = "10.0.0.5", AdditionalData = "Brak połączenia z API" });
+
+            repo.showAll();
         }
     }
 }
